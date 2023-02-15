@@ -1,6 +1,6 @@
 package be.kdg.snakejavafx.model;
 
-public class Position{
+public class Position {
     public int x;
     public int y;
 
@@ -31,5 +31,10 @@ public class Position{
     @Override
     public String toString() {
         return "("+x+","+y+")";
+    }
+
+    @Override
+    public int hashCode() {
+        return (x+","+y).hashCode();
     }
 }
