@@ -1,0 +1,65 @@
+@startuml snake 
+
+class Player
+Player : naam
+Player : score
+
+class Level 
+Level : size 
+Level : score
+Level : difficulty
+Level : startTime
+Level : endTime
+Level : winner
+Level : mode
+Level : moveSnake()
+Level : moveFood()
+Level : update()
+Level : spawnWall()
+Level : spawnFood()
+Level : setSize()
+Level : setDifficulty()
+Level : input()
+Level : update()
+Level : render() // not sure if necesarry
+Level : getScore()
+
+class Game 
+Game : setupLevel()
+Game : makePlayer()
+
+class GameObject
+GameObject : type
+
+class Snake 
+
+Class Position 
+Position : x 
+Position : y
+
+class SnakePart 
+SnakePart : orientation
+SnakePart : type
+
+
+class Highscore
+Highscore : playerName
+Highscore : score
+Highscore : levelSize
+Highscore : difficulty
+Highscore : winner 
+Highscore : startTime 
+Highscore : endTime
+
+Snake "1" -- "*" SnakePart
+SnakePart "1" -- "1" Position
+
+Game "1" -- "*" Highscore
+
+Game "1" -- "1..*" Player 
+Game "1" -- "*" Level 
+GameObject "*" -- "1" Level 
+
+Snake "1..*" -- "1" Level 
+GameObject "1" -- "1" Position
+@enduml
