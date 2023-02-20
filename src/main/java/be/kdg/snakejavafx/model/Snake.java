@@ -1,7 +1,4 @@
 package be.kdg.snakejavafx.model;
-
-import javafx.geometry.Pos;
-
 import java.util.ArrayList;
 
 public class Snake {
@@ -11,8 +8,8 @@ public class Snake {
         DOWN(new Position(0,1)),
         LEFT(new Position(-1,0)),
         RIGHT(new Position(1,0));
-        private  Position relativePos;
-        private Orientation(Position pos){
+        private final Position relativePos;
+        Orientation(Position pos){
             relativePos=pos;
         }
 
@@ -22,7 +19,7 @@ public class Snake {
     }
 
     private Orientation orientation;
-    private ArrayList<Position> snakeParts;
+    private final ArrayList<Position> snakeParts;
     public ArrayList<Position> getSnakePartPositions(){
         return snakeParts;
     }
@@ -46,7 +43,6 @@ public class Snake {
     }
 
     public void move() {
-        System.out.println("snakeParts = " + snakeParts);
         snakeParts.remove(snakeParts.size()-1);
         snakeParts.add(0, snakeParts.get(0).plus(orientation.getRelativePos()));
     }
@@ -57,5 +53,9 @@ public class Snake {
 
     public void setOrientation(Orientation orientation) {
         this.orientation = orientation;
+    }
+
+    public void lengten(){
+        snakeParts.add(0, snakeParts.get(0).plus(orientation.getRelativePos()));
     }
 }

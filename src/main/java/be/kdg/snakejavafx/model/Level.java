@@ -1,31 +1,26 @@
 package be.kdg.snakejavafx.model;
-
-import javafx.geometry.Pos;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 public class Level {
-    private Size size;
-    private int score;
-    private Difficulty difficulty;
-    private LocalDateTime startTime;
+    private final HashMap<Position,GameObject> gameObjects;
 
-    private LocalDateTime endTime;
+    private final Random random;
+    private final Size size;
+    private final Snake snake;
+    private final Highscore highscore;
 
-    private HashMap<Position,GameObject> gameObjects;
 
-    private Random random;
+    public Level(Size size, Difficulty difficulty, String playerName) {
 
-    private Snake snake;
-
-    public Level(Size size, Difficulty difficulty) {
+        highscore = new Highscore();
+        highscore.levelSize = size;
         this.size = size;
-        this.difficulty = difficulty;
+        highscore.difficulty = difficulty;
+        highscore.startTime = LocalDateTime.now();
 
-        startTime = LocalDateTime.now();
+        highscore.playerName = playerName;
 
         random = new Random();
 
@@ -39,40 +34,37 @@ public class Level {
 
     @Override
     public String toString() {
-        String string = "";
-        string += "# #".repeat(size.width) + "\n";
+        StringBuilder string = new StringBuilder();
+        string.append("# #".repeat(size.width)).append("\n");
         for (int y = 0; y < size.width; y++) {
-            string += "#";
+            string.append("#");
             for (int x = 0; x < size.height; x++) {
-                string += " ";
+                string.append(" ");
 
                 if (snake.overlaps(new Position(x, y))) {
-                    string += "x";
+                    string.append("x");
                 } else {
-                    if (gameObjects.keySet().contains(new Position(x,y))) {
-                        switch (gameObjects.get(new Position(x,y)).getType()) {
-                            case WALL:
-                                string += "#";
-                                break;
-                            case FOOD:
-                                string += "0";
-                                break;
+                    if (gameObjects.containsKey(new Position(x,y))) {
+                        switch (gameObjects.get(new Position(x, y)).getType()) {
+                            case WALL -> string.append("#");
+                            case FOOD -> string.append("0");
                         }
                     }else {
-                        string += " ";
+                        string.append(" ");
                     }
                 }
-                string += " ";
+                string.append(" ");
             }
-            string += "#\n";
+            string.append("#\n");
         }
-        string += "# #".repeat(size.width) + "\n";
-        return string;
+        string.append("# #".repeat(size.width)).append("\n");
+        string.append(getHighscore().playerName).append("'s score: ").append(highscore.score).append("\n");
+        return string.toString();
     }
 
     public static void main(String[] args) {
-        Level level = new Level(Size.M, Difficulty.EASY);
-        System.out.println(level.toString());
+        Level level = new Level(Size.M, Difficulty.EASY, "default");
+        System.out.println(level);
     }
 
     public void spawnObject(GameObject.Type type) {
@@ -95,12 +87,18 @@ public class Level {
             return false;
         }
 
-        if (gameObjects.keySet().contains(pos)) {
+        if (gameObjects.containsKey(pos)) {
             switch (gameObjects.get(pos).getType()) {
-                case WALL:
+                case WALL -> {
                     return false;
-                case FOOD:
-                    //todo increase score and make snake longer.
+                }
+                case FOOD -> {
+                    highscore.score += 100;
+                    snake.lengten();
+                    spawnObject(GameObject.Type.FOOD);
+                    gameObjects.remove(pos);
+                    return true;
+                }
             }
         }
 
@@ -117,10 +115,12 @@ public class Level {
             return true;
         }
 
-        if(gameObjects.keySet().contains(pos)) {
-            return true;
-        }
-
-        return false;
+        return gameObjects.containsKey(pos);
     }
+
+    public Highscore getHighscore(){
+        highscore.endTime = LocalDateTime.now();
+        return highscore;
+    }
+
 }
