@@ -1,4 +1,5 @@
 package be.kdg.snakejavafx.model;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Random;
@@ -8,9 +9,14 @@ public class Level {
 
     private final Random random;
     private final Size size;
+
     private final Snake snake;
+
     private final Highscore highscore;
 
+    public Snake getSnake() {
+        return snake;
+    }
 
     public Level(Size size, Difficulty difficulty, String playerName) {
 
@@ -25,7 +31,7 @@ public class Level {
         random = new Random();
 
         gameObjects = new HashMap<>();
-        snake = new Snake(3, new Position(size.width / 2, size.height / 2));
+        snake = new Snake(4, new Position(size.width / 2, size.height / 2));
 
         spawnObject(GameObject.Type.FOOD);
         spawnObject(GameObject.Type.WALL);
@@ -121,6 +127,10 @@ public class Level {
     public Highscore getHighscore(){
         highscore.endTime = LocalDateTime.now();
         return highscore;
+    }
+
+    public HashMap<Position, GameObject> getGameObjects(){
+        return  gameObjects;
     }
 
 }

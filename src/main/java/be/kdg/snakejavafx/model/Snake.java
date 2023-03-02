@@ -58,4 +58,8 @@ public class Snake {
     public void lengten(){
         snakeParts.add(0, snakeParts.get(0).plus(orientation.getRelativePos()));
     }
+
+    public Orientation getOrientation(){
+        return orientation;
+    }
 }
