@@ -33,8 +33,8 @@ public class Snake {
     }
 
     public boolean overlaps(Position pos) {
-        for (Position part :
-                snakeParts) {
+        for (int i = 0; i < snakeParts.size()-1; i++) {
+            Position part = snakeParts.get(i);
             if (part.equals(pos)) {
                 return true;
             }
@@ -52,6 +52,12 @@ public class Snake {
     }
 
     public void setOrientation(Orientation orientation) {
+        Position relative = snakeParts.get(1).subtract(snakeParts.get(0));
+        System.out.println("relative = " + relative);
+        System.out.println("orientation = " + orientation.relativePos);
+        if(relative.equals(orientation.relativePos)) {
+            return;
+        }
         this.orientation = orientation;
     }
 

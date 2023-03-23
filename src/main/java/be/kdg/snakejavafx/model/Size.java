@@ -1,13 +1,18 @@
 package be.kdg.snakejavafx.model;
 
 public enum Size {
-    S(10,10),M(15,15);
+    S(10,10),M(15,15),L(20,20);
 
-    public int width;
-    public int height;
+    public final int width;
+    public final int height;
 
-    private Size(int width,int height) {
+    Size(int width,int height) {
         this.width = width;
         this.height = height;
+    }
+
+    @Override
+    public String toString() {
+        return this.name();
     }
 }

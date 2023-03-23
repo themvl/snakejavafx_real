@@ -16,6 +16,7 @@ public class Game {
         String input;
         do{
             System.out.println(level);
+            System.out.println(System.getProperty("user.dir"));
 
             System.out.println("Type, u,d,l,r to give directions.");
             input = scanner.nextLine();

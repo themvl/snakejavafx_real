@@ -1,9 +1,10 @@
-package be.kdg.snakejavafx.view;
+package be.kdg.snakejavafx.view.snake;
 import be.kdg.snakejavafx.model.GameObject;
 import be.kdg.snakejavafx.model.Position;
 import be.kdg.snakejavafx.model.Size;
 import be.kdg.snakejavafx.model.Snake;
 import javafx.geometry.Pos;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
@@ -22,7 +23,9 @@ public class LevelView  extends StackPane{
 
     private HashMap<Position,GameObject> gameObjects;
     private double snakeMovetime = 0;
-    private final double FRAME_TIME;
+    private double frameTime;
+
+    private final Image apple;
 
     public LevelView(Size size, double FRAME_TIME) {
         this.size = size;
@@ -30,7 +33,9 @@ public class LevelView  extends StackPane{
         snakeParts = new ArrayList<>();
         direction = Snake.Orientation.UP;
         gameObjects = new HashMap<>();
-        this.FRAME_TIME = FRAME_TIME;
+        this.frameTime = FRAME_TIME;
+
+        apple = new Image("file:src/main/resources/images/apple.png");
     }
 
     public void setSnakeMoveTime(double time) {
@@ -55,6 +60,7 @@ public class LevelView  extends StackPane{
     public void draw() {
         double square_size = getSquareSize();
         GraphicsContext g = canvas.getGraphicsContext2D();
+        g.setImageSmoothing(false);
         g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         //set lines
@@ -73,11 +79,15 @@ public class LevelView  extends StackPane{
         //draw objects
         gameObjects.forEach((pos, obj) -> {
             switch (obj.getType()) {
-                case WALL -> g.setFill(Color.BLACK);
-                case FOOD -> g.setFill(Color.GREEN);
+                case WALL -> {
+                    g.setFill(Color.BLACK);
+                    g.fillRect(pos.x * square_size + OFFSET, pos.y * square_size + OFFSET,
+                            square_size, square_size);
+                }
+                case FOOD -> g.drawImage(apple, pos.x*square_size+OFFSET, pos.y*square_size+OFFSET, square_size,square_size);
             }
-            g.fillRect(pos.x*square_size+OFFSET, pos.y*square_size+OFFSET,
-                    square_size,square_size);
+
+
         });
 
         //draw player
@@ -91,10 +101,11 @@ public class LevelView  extends StackPane{
 
         //draw snake mouth
         g.setFill(Color.PURPLE);
-        drawAnimatedInDirection(direction, Color.RED, snakeParts.get(0), false);
+        drawAnimatedInDirection(direction, Color.PURPLE, snakeParts.get(0), false);
 
-        Position tail = new Position(snakeParts.get(snakeParts.size()-1).x-snakeParts.get(snakeParts.size()-2).x,
-                snakeParts.get(snakeParts.size()-1).y- snakeParts.get(snakeParts.size()-2).y);
+        Position tail = snakeParts.get(snakeParts.size()-1).subtract(snakeParts.get(snakeParts.size()-2));
+
+        drawEyes(direction,Color.BLACK,snakeParts.get(0), 0.2);
 
         Snake.Orientation direction;
         if (tail.x > 0) {
@@ -108,15 +119,6 @@ public class LevelView  extends StackPane{
         }
 
         drawAnimatedInDirection(direction, Color.RED, snakeParts.get(snakeParts.size()-1), true);
-
-
-//        Position pos = snakeParts.get(0);
-//
-//        g.setFill(Color.BLACK);
-//        g.fillOval(pos.x*square_size+OFFSET+square_size/2-square_size*0.1+offset.x*square_size*0.5,
-//                pos.y*square_size+OFFSET+square_size/2-square_size*0.1+offset.y*square_size*0.5,
-//                square_size*0.2, square_size*0.2);
-
 
     }
 
@@ -132,7 +134,7 @@ public class LevelView  extends StackPane{
         GraphicsContext g = canvas.getGraphicsContext2D();
         g.setFill(color);
         double square_size = getSquareSize();
-        double factor = (snakeMovetime/FRAME_TIME)*square_size;
+        double factor = (snakeMovetime/ frameTime)*square_size;
 
         if (reverse) {
             factor = square_size-factor;
@@ -141,20 +143,71 @@ public class LevelView  extends StackPane{
         switch (direction){
             case LEFT -> g.fillRect(pos.x*square_size+OFFSET-factor+square_size,
                     pos.y*square_size+OFFSET,
-                    factor,
+                    square_size,
                     square_size);
-            case RIGHT -> g.fillRect(pos.x*square_size+OFFSET,
+            case RIGHT -> g.fillRect(pos.x*square_size+OFFSET+factor-square_size,
                     pos.y*square_size+OFFSET,
-                    factor,
+                    square_size,
                     square_size);
             case UP -> g.fillRect(pos.x*square_size+OFFSET,
                     pos.y*square_size+OFFSET-factor+square_size,
                     square_size,
-                    factor);
+                    square_size);
             case DOWN -> g.fillRect(pos.x*square_size+OFFSET,
-                    pos.y*square_size+OFFSET,
+                    pos.y*square_size+OFFSET+factor-square_size,
                     square_size,
-                    factor);
+                    square_size);
+        }
+    }
+
+    private void drawEyes(Snake.Orientation direction, Color color, Position pos, double size){
+        GraphicsContext g = canvas.getGraphicsContext2D();
+        g.setFill(color);
+        double square_size = getSquareSize();
+        double factor = (snakeMovetime/ frameTime)*square_size;
+        double inset = square_size/4-square_size*size/2;
+
+        switch (direction){
+            case LEFT -> {
+                g.fillRect(pos.x*square_size+OFFSET-factor+inset+square_size,
+                        pos.y*square_size+OFFSET+inset,
+                        size*square_size,
+                        size*square_size);
+                g.fillRect(pos.x*square_size+OFFSET-factor+inset+square_size,
+                        pos.y*square_size+OFFSET+inset+square_size/2,
+                        size*square_size,
+                        size*square_size);
+            }
+            case RIGHT -> {
+                g.fillRect(pos.x*square_size+OFFSET+factor+inset-square_size+square_size/2,
+                        pos.y*square_size+OFFSET+inset,
+                        size*square_size,
+                        size*square_size);
+                g.fillRect(pos.x*square_size+OFFSET+factor+inset-square_size+square_size/2,
+                        pos.y*square_size+OFFSET+inset+square_size/2,
+                        size*square_size,
+                        size*square_size);
+            }
+            case UP -> {
+                g.fillRect(pos.x*square_size+OFFSET+inset,
+                        pos.y*square_size+OFFSET+inset-factor+square_size,
+                        size*square_size,
+                        size*square_size);
+                g.fillRect(pos.x*square_size+OFFSET+inset+square_size/2,
+                        pos.y*square_size+OFFSET+inset-factor+square_size,
+                        size*square_size,
+                        size*square_size);
+            }
+            case DOWN -> {
+                g.fillRect(pos.x*square_size+OFFSET+inset,
+                        pos.y*square_size+OFFSET+inset+factor-square_size+square_size/2,
+                        size*square_size,
+                        size*square_size);
+                g.fillRect(pos.x*square_size+OFFSET+inset+square_size/2,
+                        pos.y*square_size+OFFSET+inset+factor-square_size+square_size/2,
+                        size*square_size,
+                        size*square_size);
+            }
         }
     }
 
@@ -185,5 +238,9 @@ public class LevelView  extends StackPane{
             canvas.setHeight(smallest);
             draw();
         }
+    }
+
+    public void setFrameTime(double frameTime) {
+        this.frameTime = frameTime;
     }
 }

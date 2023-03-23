@@ -1,0 +1,3 @@
+Snake made by Dragon Eclipse Studios. We made
+this game with great care in javaFX for you to enjoy.
+Made by Marnicq Van Loon V1.0

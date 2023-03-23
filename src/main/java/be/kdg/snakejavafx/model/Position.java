@@ -1,5 +1,7 @@
 package be.kdg.snakejavafx.model;
 
+import javafx.geometry.Pos;
+
 public class Position {
     public int x;
     public int y;
@@ -36,5 +38,9 @@ public class Position {
     @Override
     public int hashCode() {
         return (x+","+y).hashCode();
+    }
+
+    public Position subtract(Position pos) {
+        return new Position(this.x-pos.x,this.y-pos.y);
     }
 }

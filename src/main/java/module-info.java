@@ -10,7 +10,9 @@ module be.kdg.snakejavafx {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires javafx.base;
 
     opens be.kdg.snakejavafx to javafx.fxml;
+    opens be.kdg.snakejavafx.model to javafx.base;
     exports be.kdg.snakejavafx;
 }

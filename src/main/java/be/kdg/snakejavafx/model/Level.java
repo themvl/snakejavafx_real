@@ -10,7 +10,7 @@ public class Level {
     private final Random random;
     private final Size size;
 
-    private final Snake snake;
+    private Snake snake;
 
     private final Highscore highscore;
 
@@ -31,10 +31,7 @@ public class Level {
         random = new Random();
 
         gameObjects = new HashMap<>();
-        snake = new Snake(4, new Position(size.width / 2, size.height / 2));
-
-        spawnObject(GameObject.Type.FOOD);
-        spawnObject(GameObject.Type.WALL);
+        spawnNewGameObjects();
 
     }
 
@@ -108,6 +105,10 @@ public class Level {
             }
         }
 
+        if(snake.overlaps(pos)) {
+            return false;
+        }
+
         snake.move();
         return true;
     }
@@ -131,6 +132,33 @@ public class Level {
 
     public HashMap<Position, GameObject> getGameObjects(){
         return  gameObjects;
+    }
+
+    private void spawnNewGameObjects() {
+        snake = new Snake(4, new Position(size.width / 2, size.height / 2));
+
+        spawnObject(GameObject.Type.FOOD);
+        spawnObject(GameObject.Type.WALL);
+        switch (highscore.difficulty) {
+            case EASY ->  spawnObject(GameObject.Type.WALL);
+            case MEDIUM -> {
+                spawnObject(GameObject.Type.WALL);
+                spawnObject(GameObject.Type.WALL);
+            }
+            case HARD -> {
+                spawnObject(GameObject.Type.WALL);
+                spawnObject(GameObject.Type.WALL);
+                spawnObject(GameObject.Type.WALL);
+            }
+        }
+    }
+    public void reset() {
+        highscore.score = 0;
+        highscore.startTime = LocalDateTime.now();
+        snake = new Snake(4, new Position(size.width / 2, size.height / 2));
+
+        gameObjects.clear();
+        spawnNewGameObjects();
     }
 
 }

@@ -6,10 +6,10 @@ public class GameObject {
     }
 
     public enum Type {
-        FOOD,WALL;
+        FOOD,WALL
     }
     private Position position;
-    private Type type;
+    private final Type type;
 
     public GameObject(Type type){
         this.type = type;
