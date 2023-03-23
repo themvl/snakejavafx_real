@@ -2,14 +2,7 @@ package be.kdg.snakejavafx.view.snake;
 
 import be.kdg.snakejavafx.model.Level;
 import be.kdg.snakejavafx.model.Snake;
-import be.kdg.snakejavafx.view.about.AboutView;
-import be.kdg.snakejavafx.view.lost.LostView;
 import javafx.animation.AnimationTimer;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-
-import java.awt.*;
 
 public class SnakePresenter {
     private final Level model;
@@ -17,7 +10,7 @@ public class SnakePresenter {
     private final AnimationTimer mainLoop;
     private boolean isPaused = false;
 
-    public SnakePresenter(Level model, SnakeView view, double FRAME_TIME) {
+    public SnakePresenter(Level model, SnakeView view) {
         this.model = model;
         this.view = view;
 
@@ -28,7 +21,6 @@ public class SnakePresenter {
 
         mainLoop = new AnimationTimer() {
             private long lastUpdate = startNanoTime;
-            public final boolean isPlaying = true;
             double deltatime=0;
             public void handle(long currentNanoTime) {
                 if(isPaused) {

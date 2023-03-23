@@ -23,18 +23,13 @@ public class StartPresenter {
         view.getBtnAbout().setOnAction(actionEvent -> {
             AboutView aboutView = new AboutView();
             Stage aboutStage = new Stage();
-            aboutStage.initOwner(view.getScene().getWindow());
-            aboutStage.initModality(Modality.APPLICATION_MODAL);
+
             aboutStage.setScene(new Scene(aboutView));
-            aboutStage.setX(view.getScene().getWindow().getX() + 100);
-            aboutStage.setY(view.getScene().getWindow().getY() + 100);
-            aboutStage.setWidth(560);
-            aboutStage.setHeight(300);
-            aboutStage.setResizable(true);
+
             aboutStage.setMaxWidth(560);
             aboutStage.setMaxHeight(300);
 
-            aboutStage.showAndWait();
+            makeDialog(aboutStage);
         });
 
         view.getBtnNewGame().setOnAction(actionEvent -> {
@@ -51,17 +46,21 @@ public class StartPresenter {
 
         view.getBtnHelp().setOnAction(actionEvent -> {
             HelpView helpView = new HelpView();
-            Stage aboutStage = new Stage();
-            aboutStage.initOwner(view.getScene().getWindow());
-            aboutStage.initModality(Modality.APPLICATION_MODAL);
-            aboutStage.setScene(new Scene(helpView));
-            aboutStage.setX(view.getScene().getWindow().getX() + 100);
-            aboutStage.setY(view.getScene().getWindow().getY() + 100);
-            aboutStage.setWidth(560);
-            aboutStage.setHeight(300);
-            aboutStage.setResizable(true);
-
-            aboutStage.showAndWait();
+            Stage helpStage = new Stage();
+            helpStage.setScene(new Scene(helpView));
+            makeDialog(helpStage);
         });
+    }
+
+    private void makeDialog(Stage stage) {
+        stage.initOwner(view.getScene().getWindow());
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setX(view.getScene().getWindow().getX() + 100);
+        stage.setY(view.getScene().getWindow().getY() + 100);
+        stage.setWidth(560);
+        stage.setHeight(300);
+        stage.setResizable(true);
+
+        stage.showAndWait();
     }
 }

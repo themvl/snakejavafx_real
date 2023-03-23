@@ -27,13 +27,13 @@ public class LevelView  extends StackPane{
 
     private final Image apple;
 
-    public LevelView(Size size, double FRAME_TIME) {
+    public LevelView(Size size) {
         this.size = size;
         getChildren().add(canvas);
         snakeParts = new ArrayList<>();
         direction = Snake.Orientation.UP;
         gameObjects = new HashMap<>();
-        this.frameTime = FRAME_TIME;
+        this.frameTime = 0.3;
 
         apple = new Image("file:src/main/resources/images/apple.png");
     }
@@ -63,32 +63,9 @@ public class LevelView  extends StackPane{
         g.setImageSmoothing(false);
         g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-        //set lines
-        g.setStroke(Color.BLACK);
-        g.setLineWidth(1);
+        drawGrid(g);
 
-        //draw grid
-        for (int x = 0; x <= size.width; x++) {
-            g.strokeLine(OFFSET+x*square_size, OFFSET, OFFSET+x*square_size, OFFSET+size.height*square_size);
-        }
-
-        for (int y = 0; y <= size.height; y++) {
-            g.strokeLine( OFFSET,OFFSET+y*square_size, OFFSET+size.height*square_size, OFFSET+y*square_size);
-        }
-
-        //draw objects
-        gameObjects.forEach((pos, obj) -> {
-            switch (obj.getType()) {
-                case WALL -> {
-                    g.setFill(Color.BLACK);
-                    g.fillRect(pos.x * square_size + OFFSET, pos.y * square_size + OFFSET,
-                            square_size, square_size);
-                }
-                case FOOD -> g.drawImage(apple, pos.x*square_size+OFFSET, pos.y*square_size+OFFSET, square_size,square_size);
-            }
-
-
-        });
+        drawObjects(g);
 
         //draw player
         g.setFill(Color.RED);
@@ -122,6 +99,39 @@ public class LevelView  extends StackPane{
 
     }
 
+    private void drawGrid(GraphicsContext g) {
+        double square_size = getSquareSize();
+
+        //set lines
+        g.setStroke(Color.BLACK);
+        g.setLineWidth(1);
+
+        //draw grid
+        for (int x = 0; x <= size.width; x++) {
+            g.strokeLine(OFFSET+x*square_size, OFFSET, OFFSET+x*square_size, OFFSET+size.height*square_size);
+        }
+
+        for (int y = 0; y <= size.height; y++) {
+            g.strokeLine( OFFSET,OFFSET+y*square_size, OFFSET+size.height*square_size, OFFSET+y*square_size);
+        }
+    }
+
+    private void drawObjects(GraphicsContext g) {
+        double square_size = getSquareSize();
+
+        //draw objects
+        gameObjects.forEach((pos, obj) -> {
+            switch (obj.getType()) {
+                case WALL -> {
+                    g.setFill(Color.BLACK);
+                    g.fillRect(pos.x * square_size + OFFSET, pos.y * square_size + OFFSET,
+                            square_size, square_size);
+                }
+                case FOOD -> g.drawImage(apple, pos.x*square_size+OFFSET, pos.y*square_size+OFFSET, square_size,square_size);
+            }
+        });
+    }
+
     private double getSquareSize() {
         return (getSmallestDimension()-2*OFFSET)/size.width;
     }
@@ -141,20 +151,20 @@ public class LevelView  extends StackPane{
         }
 
         switch (direction){
-            case LEFT -> g.fillRect(pos.x*square_size+OFFSET-factor+square_size,
-                    pos.y*square_size+OFFSET,
+            case LEFT -> g.fillRect(fromGridToPixels(pos.x)-factor+square_size,
+                    fromGridToPixels(pos.y),
                     square_size,
                     square_size);
-            case RIGHT -> g.fillRect(pos.x*square_size+OFFSET+factor-square_size,
-                    pos.y*square_size+OFFSET,
+            case RIGHT -> g.fillRect(fromGridToPixels(pos.x)+factor-square_size,
+                    fromGridToPixels(pos.y),
                     square_size,
                     square_size);
-            case UP -> g.fillRect(pos.x*square_size+OFFSET,
-                    pos.y*square_size+OFFSET-factor+square_size,
+            case UP -> g.fillRect(fromGridToPixels(pos.x),
+                    fromGridToPixels(pos.y)-factor+square_size,
                     square_size,
                     square_size);
-            case DOWN -> g.fillRect(pos.x*square_size+OFFSET,
-                    pos.y*square_size+OFFSET+factor-square_size,
+            case DOWN -> g.fillRect(fromGridToPixels(pos.x),
+                    fromGridToPixels(pos.y)+factor-square_size,
                     square_size,
                     square_size);
         }
@@ -169,46 +179,50 @@ public class LevelView  extends StackPane{
 
         switch (direction){
             case LEFT -> {
-                g.fillRect(pos.x*square_size+OFFSET-factor+inset+square_size,
-                        pos.y*square_size+OFFSET+inset,
+                g.fillRect(fromGridToPixels(pos.x)-factor+inset+square_size,
+                        fromGridToPixels(pos.y)+inset,
                         size*square_size,
                         size*square_size);
-                g.fillRect(pos.x*square_size+OFFSET-factor+inset+square_size,
-                        pos.y*square_size+OFFSET+inset+square_size/2,
+                g.fillRect(fromGridToPixels(pos.x)-factor+inset+square_size,
+                        fromGridToPixels(pos.y)+inset+square_size/2,
                         size*square_size,
                         size*square_size);
             }
             case RIGHT -> {
-                g.fillRect(pos.x*square_size+OFFSET+factor+inset-square_size+square_size/2,
-                        pos.y*square_size+OFFSET+inset,
+                g.fillRect(fromGridToPixels(pos.x)+factor+inset-square_size+square_size/2,
+                        fromGridToPixels(pos.y)+inset,
                         size*square_size,
                         size*square_size);
-                g.fillRect(pos.x*square_size+OFFSET+factor+inset-square_size+square_size/2,
-                        pos.y*square_size+OFFSET+inset+square_size/2,
+                g.fillRect(fromGridToPixels(pos.x)+factor+inset-square_size+square_size/2,
+                        fromGridToPixels(pos.y)+inset+square_size/2,
                         size*square_size,
                         size*square_size);
             }
             case UP -> {
-                g.fillRect(pos.x*square_size+OFFSET+inset,
-                        pos.y*square_size+OFFSET+inset-factor+square_size,
+                g.fillRect(fromGridToPixels(pos.x)+inset,
+                        fromGridToPixels(pos.y)+inset-factor+square_size,
                         size*square_size,
                         size*square_size);
-                g.fillRect(pos.x*square_size+OFFSET+inset+square_size/2,
-                        pos.y*square_size+OFFSET+inset-factor+square_size,
+                g.fillRect(fromGridToPixels(pos.x)+inset+square_size/2,
+                        fromGridToPixels(pos.y)+inset-factor+square_size,
                         size*square_size,
                         size*square_size);
             }
             case DOWN -> {
-                g.fillRect(pos.x*square_size+OFFSET+inset,
-                        pos.y*square_size+OFFSET+inset+factor-square_size+square_size/2,
+                g.fillRect(fromGridToPixels(pos.x)+inset,
+                        fromGridToPixels(pos.y)+inset+factor-square_size+square_size/2,
                         size*square_size,
                         size*square_size);
-                g.fillRect(pos.x*square_size+OFFSET+inset+square_size/2,
-                        pos.y*square_size+OFFSET+inset+factor-square_size+square_size/2,
+                g.fillRect(fromGridToPixels(pos.x)+inset+square_size/2,
+                        fromGridToPixels(pos.y)+inset+factor-square_size+square_size/2,
                         size*square_size,
                         size*square_size);
             }
         }
+    }
+
+    private double fromGridToPixels(int pos) {
+        return pos*getSquareSize()+OFFSET;
     }
 
     @Override

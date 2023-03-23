@@ -53,8 +53,6 @@ public class Snake {
 
     public void setOrientation(Orientation orientation) {
         Position relative = snakeParts.get(1).subtract(snakeParts.get(0));
-        System.out.println("relative = " + relative);
-        System.out.println("orientation = " + orientation.relativePos);
         if(relative.equals(orientation.relativePos)) {
             return;
         }

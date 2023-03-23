@@ -35,12 +35,12 @@ public class SnakeView extends BorderPane {
 
     private LostView lostView;
 
-    public SnakeView(Size size, double FRAME_TIME) {
-        this.initialiseNodes(size, FRAME_TIME);
+    public SnakeView(Size size) {
+        this.initialiseNodes(size);
         this.layoutNodes();
     }
 
-    private void initialiseNodes(Size size, double FRAME_TIME){
+    private void initialiseNodes(Size size){
         // init nodes
 
         spelerNaam = new Label();
@@ -72,7 +72,7 @@ public class SnakeView extends BorderPane {
 
         levelPane = new StackPane();
 
-        levelview = new LevelView(size,FRAME_TIME);
+        levelview = new LevelView(size);
         topInformation.setPrefHeight(20);
         topInformation.setPadding(new Insets(10,10,10,10));
 

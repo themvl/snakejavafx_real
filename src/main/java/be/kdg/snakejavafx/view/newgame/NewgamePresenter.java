@@ -18,7 +18,7 @@ public class NewgamePresenter {
         view.getPlay().setOnAction(ActionEvent -> {
             String name = view.getPlayerName();
 
-            if(name == "") {
+            if(name.equals("")) {
                 view.nameError();
                 return;
             }
@@ -26,8 +26,8 @@ public class NewgamePresenter {
             Difficulty diff = view.getDifficulty();
             Size size = view.getSize();
             Level level = new Level(size,diff,name);
-            SnakeView snakeView = new SnakeView(size, 0.3); //todo tedetermine with difficulty
-            SnakePresenter presenter = new SnakePresenter(level , snakeView, 0.3);
+            SnakeView snakeView = new SnakeView(size);
+            SnakePresenter presenter = new SnakePresenter(level , snakeView);
 
             view.getScene().setRoot(snakeView);
             snakeView.getScene().getRoot().requestFocus();
